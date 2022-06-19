@@ -4,6 +4,7 @@
 // ignore: unnecessary_import
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 // ignore: unused_import
 import 'src.dart';
 // ignore: import_of_legacy_library_into_null_safe, unused_import
@@ -149,7 +150,9 @@ class _SecondPageState extends State<SecondPage> {
                        // ignore: avoid_unnecessary_containers
                        Container(
                         child:  InkWell(
-                          onTap: (){},
+                          onTap: (){
+                            _saveImage();
+                          },
                           child:  Image.network(
                             '${data!['hits'][index]['largeImageURL']}'
                           ) ,
@@ -219,7 +222,6 @@ class _LoginState extends State<Login> {
       controller: password,
       obscureText: true,
     decoration:const InputDecoration(
-      
       hintText: 'Password',
       fillColor: Colors.white,
       filled: true,
@@ -286,4 +288,8 @@ Future<Map> getPics(String category) async{
   String url = 'https://pixabay.com/api/?key=$apiKey&q=$category&image_type=photo';
   http.Response response = await http.get(Uri.parse(url));
   return json.decode(response.body);
+}
+
+void _saveImage() async{
+  await GallerySaver.saveImage("https://www.fundacion-affinity.org/sites/default/files/los-10-sonidos-principales-del-perro.jpg",albumName: "Flutter Images" );
 }

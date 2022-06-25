@@ -150,8 +150,9 @@ class _SecondPageState extends State<SecondPage> {
                        // ignore: avoid_unnecessary_containers
                        Container(
                         child:  InkWell(
-                          onTap: (){
-                            _saveImage();
+                          onLongPress: (){
+                            var img = '${data!['hits'][index]['largeImageURL']}';
+                            _saveImage(img);
                           },
                           child:  Image.network(
                             '${data!['hits'][index]['largeImageURL']}'
@@ -290,6 +291,7 @@ Future<Map> getPics(String category) async{
   return json.decode(response.body);
 }
 
-void _saveImage() async{
-  await GallerySaver.saveImage("https://www.fundacion-affinity.org/sites/default/files/los-10-sonidos-principales-del-perro.jpg",albumName: "Flutter Images" );
+void _saveImage(img) async{
+  await GallerySaver.saveImage(img);
+  
 }

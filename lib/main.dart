@@ -1,8 +1,7 @@
 
-// ignore_for_file: avoid_print, must_be_immutable
+// ignore_for_file: avoid_print, must_be_immutable, prefer_const_constructors
 
-// ignore: unnecessary_import
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 // ignore: unused_import
@@ -142,6 +141,7 @@ class _SecondPageState extends State<SecondPage> {
           }else if(snapShot.hasData){
             return  Center(
               child:  ListView.builder( 
+                scrollDirection: Axis.vertical,
                 itemCount: data?.length,
                 itemBuilder: (context,index){
                   return Column(
@@ -152,7 +152,38 @@ class _SecondPageState extends State<SecondPage> {
                         child:  InkWell(
                           onLongPress: (){
                             var img = '${data!['hits'][index]['largeImageURL']}';
-                            _saveImage(img);
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context){
+                                return AlertDialog(
+                                  title: const Text('Download Image Alert'),
+                                  content: SingleChildScrollView(
+                                    child: ListBody(
+                                      children: const [
+                                        Text('Do you want save this image?')
+                                      ]
+                                    ),
+                                  ),
+                                  actions: [
+                                    FloatingActionButton(
+                                      child: const Text("Yes"),
+                                      onPressed: (){
+                                         _saveImage(img);
+                                         Navigator.pop(context);
+                                         _showDialog(context);
+                                      },
+                                    ),
+                                    FloatingActionButton(
+                                      child: const Text("No"),
+                                      onPressed: (){
+                                        Navigator.pop(context);
+                                      } ,
+                                    )
+                                  ],
+                                );
+                              }
+                            );
                           },
                           child:  Image.network(
                             '${data!['hits'][index]['largeImageURL']}'
@@ -239,12 +270,10 @@ class _LoginState extends State<Login> {
        us = user.text;
        pass = password.text;
        if(us == 'user' && pass == 'user'){
-       
            Navigator.of(context).push(MaterialPageRoute(
              builder: (context){
                return FirsPage();
              }));
-
        }else{
          showDialog(
            context: context,
@@ -291,7 +320,38 @@ Future<Map> getPics(String category) async{
   return json.decode(response.body);
 }
 
-void _saveImage(img) async{
+_saveImage(img) async{
   await GallerySaver.saveImage(img);
-  
+  return;
 }
+
+
+// set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: const Text('Felicidades'),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+             Text('Imagen guardada con exito')
+          ],
+        ),
+      ),
+    );
+
+
+     _showDialog(BuildContext context) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return Expanded(
+              child: AlertDialog(
+                title: const Text('Done!'),
+                content: const Text('Image Downloaded successfully')
+              ),
+            );
+          }
+        );
+    }
+
+
+    
